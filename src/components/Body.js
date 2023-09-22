@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 
 const Body = () => {
   const [data, setData] = useState([]);
+  const [filteredData, setfilteredData] = useState([]);
   useEffect(() => {
     fetchData();
   }, []);
@@ -15,15 +16,17 @@ const Body = () => {
     setData(
       json?.data?.cards[2]?.card?.card?.gridElements?.infoWithStyle?.restaurants
     );
+    setfilteredData(
+      json?.data?.cards[2]?.card?.card?.gridElements?.infoWithStyle?.restaurants
+    );
   };
 
   const [searchQuery, setsearchQuery] = useState("");
 
   const search = (val) => {
-    setData(
+    setfilteredData(
       data.filter((res) => {
-        console.log(res.info.name);
-        return res.info.name.includes(val);
+        return res.info.name.toLowerCase().includes(val.toLowerCase());
       })
     );
   };
@@ -42,21 +45,23 @@ const Body = () => {
       </div>
       <button
         onClick={() => {
-          const newdata = data.filter((res) => res.info.avgRating >= 4.0);
-          setData(newdata);
+          const newdata = filteredData.filter(
+            (res) => res.info.avgRating >= 4.0
+          );
+          setfilteredData(newdata);
         }}
       >
         Top
       </button>
       <button
         onClick={() => {
-          fetchData();
+          setfilteredData(data);
         }}
       >
         Clear
       </button>
       <div className="res-container">
-        {data.map((restaurant) => {
+        {filteredData.map((restaurant) => {
           return (
             <RestaurantCard key={restaurant.info.id} resData={restaurant} />
           );
